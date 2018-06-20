@@ -1,9 +1,4 @@
-// war plugin
-// See: http://www.gradle.org/docs/current/userguide/war_plugin.html
 apply plugin: 'war'
-
-// jetty plugin
-// See: http://www.gradle.org/docs/current/userguide/jetty_plugin.html
 apply plugin: 'jetty'
 
 jettyRun {
@@ -19,7 +14,6 @@ tasks.withType(Test) {
     testLogging {
         exceptionFormat "full"
         events "started", "skipped", "passed", "failed"
-//        showStandardStreams true
     }
 }
 
@@ -29,15 +23,14 @@ repositories {
 
 dependencies {
     providedCompile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    // Jersey
     compile 'org.glassfish.jersey.core:jersey-server:2.22.2'
-    // Jersey core Servlet 3.x implementation
     compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.22.2'
-    // Jersey Test Framework — Grizzly2 container
+    // Json
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2'
     compile 'org.json:json:20171018'
+    // Test frameworks
     testCompile 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.22.2'
-//    testCompile 'com.sun.jersey:jersey-test-framework:1.12'
     testCompile 'io.rest-assured:rest-assured:3.1.0'
     testCompile 'junit:junit:4.12'
-
 }
