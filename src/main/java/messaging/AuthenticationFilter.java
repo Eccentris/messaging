@@ -29,9 +29,8 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
 
     @Override
     public void filter(ContainerRequestContext crc) {
-        Method method = resourceInfo.getResourceMethod();
 
-        System.out.println(method.getAnnotations());
+        Method method = resourceInfo.getResourceMethod();
 
         // Only check access if PermitAll is not present
         if( ! method.isAnnotationPresent(PermitAll.class)) {
@@ -44,24 +43,15 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
                 return;
             }
 
-            final MultivaluedMap<String, String> headers = crc.getHeaders();
+            String[] usernameAndPassword = getUserAndPwFromContext(crc);
 
-            final List<String> auth = headers.get(HttpHeaders.AUTHORIZATION);
-
-            if(auth == null || auth.isEmpty()) {
+            if(usernameAndPassword == null) {
                 crc.abortWith(Response
                         .status(Response.Status.UNAUTHORIZED)
                         .entity("Access to this resource is denied")
                         .build());
                 return;
             }
-
-            // Get encoded username and password
-            final String encodedPassword = auth.get(0).replaceFirst(AUTH_SCHEME + " ", "");
-
-            String[] usernameAndPassword = new String(Base64
-                    .decode(encodedPassword.getBytes()))
-                    .split(":", 2);;
 
             final String username = usernameAndPassword[0];
             final String password = usernameAndPassword[1];
@@ -91,7 +81,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
          *
          */
 
-        if(username.equals("linda") && password.equals("password")) {
+        if((username.equals("linda") || username.equals("anna")) && password.equals("password")) {
 
             String userRole = "USER";
 
@@ -101,4 +91,25 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
         }
         return false;
     }
+
+    public static String[] getUserAndPwFromContext(ContainerRequestContext crc) {
+
+        final MultivaluedMap<String, String> headers = crc.getHeaders();
+
+        final List<String> auth = headers.get(HttpHeaders.AUTHORIZATION);
+
+        if(auth == null || auth.isEmpty()) {
+            return null;
+        }
+
+        // Get encoded username and password
+        final String encodedPassword = auth.get(0).replaceFirst(AUTH_SCHEME + " ", "");
+
+        String[] usernameAndPassword = new String(Base64
+                .decode(encodedPassword.getBytes()))
+                .split(":", 2);
+
+        return usernameAndPassword;
+    }
+
 }
