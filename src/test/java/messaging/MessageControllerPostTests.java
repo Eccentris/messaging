@@ -31,7 +31,7 @@ public class MessageControllerPostTests extends JerseyTest {
     }
 
     /**
-     * When basic auth and message content is provided, post should succeed
+     * When message content is provided, post should succeed
      * with accurate resource location provided
      * @result Status 201, location header set
      */
@@ -50,26 +50,6 @@ public class MessageControllerPostTests extends JerseyTest {
             .statusCode(201)
             .header("Location",
                     getBaseUri() + "message/1");
-
-    }
-
-    /**
-     * When basic auth is not provided, post should fail
-     * @result Status 401, error message
-     */
-    @Test
-    public void postShouldFailWith401WhenBasicAuthNotProvidedTest() {
-
-        Response response = given()
-                                .port(PORT)
-                                .body("Hello")
-                            .when()
-                                .post("/message");
-
-        String errorMsg = "Please provide user as part of Basic Auth";
-
-        Assert.assertEquals(401, response.getStatusCode());
-        Assert.assertEquals(errorMsg, response.getBody().asString());
 
     }
 
@@ -145,7 +125,4 @@ public class MessageControllerPostTests extends JerseyTest {
         Assert.assertEquals(errorMsg, response.getBody().asString());
 
     }
-
-    //TODO test for URISyntaxException
-
 }

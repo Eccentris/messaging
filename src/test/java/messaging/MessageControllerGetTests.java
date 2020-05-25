@@ -30,11 +30,11 @@ public class MessageControllerGetTests extends JerseyTest {
     }
 
     /**
-     * When basic auth is provided and a message exists, get should succeed
+     * When a message exists, get should succeed
      * @result Status 200, Expected JSON body
      */
     @Test
-    public void getShouldSucceedWith200WhenBasicAuthProvidedTest() {
+    public void getShouldSucceedWith200Test() {
 
         //Add message so there is one to retrieve
         Message message = new Message("username", "hello");
@@ -76,28 +76,6 @@ public class MessageControllerGetTests extends JerseyTest {
             .statusCode(200)
             .body("content", equalTo("hello"))
             .body("author", equalTo("username"));
-    }
-
-    /**
-     * get should fail if no Basic auth
-     * @result Status 401, Error message
-     */
-    @Test
-    public void getShouldFailWith401WhenBasicAuthNotProvidedTest() {
-
-        //Add message so there is one to retrieve
-        Message message = new Message("username", "hello");
-        messageDao.add(message);
-
-        Response response = given()
-                                .port(PORT)
-                            .when()
-                                .get("/message/1");
-
-        String errorMsg = "Please provide user as part of Basic Auth";
-
-        Assert.assertEquals(401, response.getStatusCode());
-        Assert.assertEquals(errorMsg, response.getBody().asString());
     }
 
     /**

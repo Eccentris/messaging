@@ -29,12 +29,12 @@ public class MessageControllerDeleteTests extends JerseyTest {
     }
 
     /**
-     * When basic auth is provided, user matches message author
+     * When user matches message author
      * and a message exists, delete should succeed
      * @result Status 202, Expected success message
      */
     @Test
-    public void deleteShouldSucceedWith202WhenBasicAuthProvidedTest() {
+    public void deleteShouldSucceedWith202WhenSameUserTest() {
 
         //Add message so there is one to delete
         Message message = new Message("username", "hello");
@@ -52,29 +52,6 @@ public class MessageControllerDeleteTests extends JerseyTest {
 
         Assert.assertEquals(202, response.getStatusCode());
         Assert.assertEquals(successMsg, response.getBody().asString());
-
-    }
-
-    /**
-     * Delete should fail if no basic auth provided
-     * @result Status 401, error message
-     */
-    @Test
-    public void deleteShouldFailWith401WhenBasicAuthNotProvidedTest() {
-
-        //Add message so there is one to delete
-        Message message = new Message("username", "hello");
-        messageDao.add(message);
-
-        Response response = given()
-                                .port(PORT)
-                            .when()
-                                .delete("/message/1");
-
-        String errorMsg = "Please provide user as part of Basic Auth";
-
-        Assert.assertEquals(401, response.getStatusCode());
-        Assert.assertEquals(errorMsg, response.getBody().asString());
 
     }
 

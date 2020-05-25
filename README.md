@@ -2,7 +2,7 @@
 A simple REST messaging API
 
 ## Building the application
-JDK is required in order to run this application.
+**This only works (tested) with Java 8**. A JDK for 1.8 is required in order to run this application.
 To build, run and test the application, use the provided gradle wrapper.
 #### build
 `./gradlew build`
@@ -11,8 +11,17 @@ To build, run and test the application, use the provided gradle wrapper.
 #### test
 `./gradlew test`
 
+## Authentication
+There are two users in the system:
+
+`    anna:password`
+
+`    linda:password`
+
+**All endpoints require Basic Auth**, and one of these two must be used.
+
 ## API resources
-When running the application, the API can be reached at `http://localhost:8080/messaging/message`. **All endpoints require Basic Auth**.
+When running the application, the API can be reached at `http://localhost:8080/messaging/message`.
 
 ### GET /message
 Returns all Messages

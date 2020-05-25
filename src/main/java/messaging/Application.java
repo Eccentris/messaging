@@ -8,6 +8,7 @@ public class Application extends ResourceConfig {
 
     public Application() {
         packages(this.getClass().getPackage().getName());
+        register(AuthenticationFilter.class);
     }
 
 }

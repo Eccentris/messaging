@@ -1,5 +1,6 @@
 package messaging;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -16,16 +17,9 @@ public class MessageController {
     public static final MessageDao messageDao = new MessageDao();
 
     @GET
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMessages(@Context ContainerRequestContext crc) {
-
-        String user = UserAuth.getUserFromContext(crc);
-
-        if(user == null || user.length() == 0) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Please provide user as part of Basic Auth")
-                    .build();
-        }
+    public Response getMessages() {
 
         String map = messageDao.getAllMessages();
 
@@ -35,19 +29,11 @@ public class MessageController {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMessageById(@Context ContainerRequestContext crc,
-                                   @PathParam("id") long id) {
+    public Response getMessageById(@PathParam("id") long id) {
 
-        String user = UserAuth.getUserFromContext(crc);
-
-        if(user == null || user.length() == 0) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Please provide user as part of Basic Auth")
-                    .build();
-        }
-
-        Message message = null;
+        Message message;
 
         try {
             message = messageDao.get(id);
@@ -64,17 +50,12 @@ public class MessageController {
 
 
     @POST
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
     public Response addMessage(@Context ContainerRequestContext crc,
                                String content) {
 
-        String user = UserAuth.getUserFromContext(crc);
-
-        if(user == null || user.length() == 0) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Please provide user as part of Basic Auth")
-                    .build();
-        }
+        String user = AuthenticationFilter.getUserAndPwFromContext(crc)[0];
 
         if(content == null || content.length() == 0 || content.length() > 500) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -87,7 +68,7 @@ public class MessageController {
 
         long id = messageDao.add(message);
 
-        URI uri = null;
+        URI uri;
 
         try {
             uri = new URI("/message/" + String.valueOf(id));
@@ -102,18 +83,13 @@ public class MessageController {
 
     @PUT
     @Path("/{id}")
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
     public Response editMessage(@Context ContainerRequestContext crc,
                                   @PathParam("id") long id,
                                   String content) {
 
-        String user = UserAuth.getUserFromContext(crc);
-
-        if(user == null || user.length() == 0) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Please provide user as part of Basic Auth")
-                    .build();
-        }
+        String user = AuthenticationFilter.getUserAndPwFromContext(crc)[0];
 
         if(content == null || content.length() == 0 || content.length() > 500) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -122,7 +98,7 @@ public class MessageController {
                     .build();
         }
 
-        Message message = null;
+        Message message;
 
         try {
             message = messageDao.get(id);
@@ -132,7 +108,7 @@ public class MessageController {
                     .build();
         }
 
-        if(!message.getAuthor().equals(user)) {
+        if( ! message.getAuthor().equals(user)) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity("Only user=" + message.getAuthor() +
                             " is allowed to edit this message")
@@ -155,17 +131,12 @@ public class MessageController {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteMessage(@Context ContainerRequestContext crc,
                                   @PathParam("id") long id) {
 
-        String user = UserAuth.getUserFromContext(crc);
-
-        if(user == null || user.length() == 0) {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Please provide user as part of Basic Auth")
-                    .build();
-        }
+        String user = AuthenticationFilter.getUserAndPwFromContext(crc)[0];
 
         Message message = null;
 
@@ -177,7 +148,7 @@ public class MessageController {
                     .build();
         }
 
-        if(!message.getAuthor().equals(user)) {
+        if( ! message.getAuthor().equals(user)) {
             return  Response.status(Response.Status.FORBIDDEN)
                     .entity("Only user=" + message.getAuthor() +
                             " is allowed to delete this message")

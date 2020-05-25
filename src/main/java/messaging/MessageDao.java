@@ -24,7 +24,7 @@ public class MessageDao {
 
     public Message get(long id) throws NoSuchElementException {
 
-        if(!messages.containsKey(id)) {
+        if( ! messages.containsKey(id)) {
             throw new NoSuchElementException();
         }
 
@@ -41,7 +41,7 @@ public class MessageDao {
 
     public void update(long id, Message message) throws NoSuchElementException {
 
-        if(!messages.containsKey(id)) {
+        if( ! messages.containsKey(id)) {
             throw new NoSuchElementException();
         }
 
@@ -51,7 +51,7 @@ public class MessageDao {
 
     public void remove(long id) throws NoSuchElementException {
 
-        if(!messages.containsKey(id)) {
+        if( ! messages.containsKey(id)) {
             throw new NoSuchElementException();
         }
 
