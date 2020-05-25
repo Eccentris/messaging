@@ -1,5 +1,6 @@
 package messaging;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -16,6 +17,7 @@ public class MessageController {
     public static final MessageDao messageDao = new MessageDao();
 
     @GET
+    @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMessages(@Context ContainerRequestContext crc) {
 
